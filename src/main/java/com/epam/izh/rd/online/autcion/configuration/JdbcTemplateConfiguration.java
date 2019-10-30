@@ -1,11 +1,10 @@
-package com.epam.izh.rd.online.task3.configuration;
+package com.epam.izh.rd.online.autcion.configuration;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 
-@Configuration
 public class JdbcTemplateConfiguration {
 
     public JdbcTemplate jdbcTemplate() {
