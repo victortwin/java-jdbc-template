@@ -1,9 +1,8 @@
-package com.epam.izh.rd.online.task3.repository;
+package com.epam.izh.rd.online.autcion.repository;
 
-import com.epam.izh.rd.online.task2.entity.Bid;
-import com.epam.izh.rd.online.task2.entity.Item;
-import com.epam.izh.rd.online.task2.entity.User;
-import com.epam.izh.rd.online.task2.repository.PublicAuction;
+import com.epam.izh.rd.online.autcion.entity.Bid;
+import com.epam.izh.rd.online.autcion.entity.Item;
+import com.epam.izh.rd.online.autcion.entity.User;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
