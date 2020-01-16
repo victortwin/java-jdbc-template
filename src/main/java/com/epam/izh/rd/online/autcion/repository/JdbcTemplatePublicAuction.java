@@ -8,9 +8,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
-import java.sql.Date;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class JdbcTemplatePublicAuction implements PublicAuction {
@@ -69,17 +71,34 @@ public class JdbcTemplatePublicAuction implements PublicAuction {
 
     @Override
     public Map<User, Double> getAvgItemCost() {
-        return null; //TODO
+        HashSet<User> users = new HashSet<>(jdbcTemplate.query("SELECT * FROM users RIGHT JOIN items ON users.user_id=items.user_id", userRowMapper));
+        return users.stream()
+                .collect(Collectors.toMap(user -> user, user -> getUserItems(Long.parseLong(user.getUserId())).stream()
+                        .mapToDouble(Item::getStartPrice)
+                        .average()
+                        .orElse(0)));
     }
 
     @Override
     public Map<Item, Bid> getMaxBidsForEveryItem() {
-        return null; //TODO
+        List<Bid> bids = jdbcTemplate.query("SELECT * FROM bids", bidRowMapper);
+        List<Item> items = jdbcTemplate.query("SELECT DISTINCT items.item_id, items.bid_increment, items.buy_it_now, items.description, items.start_date, " +
+                        "items.stop_date, items.title, items.start_price, items.user_id " +
+                        "FROM items RIGHT JOIN bids ON items.item_id=bids.item_id",
+                itemRowMapper);
+        return items.stream()
+                .collect(Collectors.toMap(item -> item,item -> bids.stream()
+                        .filter(bid -> item.getItemId().equals(bid.getItemId()))
+                        .max(Comparator.comparingDouble(Bid::getBidValue)).get()
+                ));
     }
 
     @Override
     public List<Bid> getUserActualBids(long id) {
-        return null; //TODO
+        return jdbcTemplate.query("SELECT bids.bid_id, bids.bid_date, bids.bid_value, bids.item_id, bids.user_id FROM bids LEFT JOIN users " +
+                        "ON users.user_id=bids.user_id LEFT JOIN items " +
+                        "ON bids.item_id=items.item_id WHERE items.buy_it_now=false",
+                bidRowMapper);
     }
 
     @Override
@@ -109,12 +128,25 @@ public class JdbcTemplatePublicAuction implements PublicAuction {
     }
 
     @Override
+    public boolean createBid(Bid bid) {
+        return jdbcTemplate.update("INSERT INTO bids VALUES (?,?,?,?,?);", ps -> {
+            ps.setInt(1, Integer.parseInt(bid.getBidId()));
+            ps.setDate(2, bid.getBidDate());
+            ps.setDouble(3, bid.getBidValue());
+            ps.setString(4, bid.getItemId());
+            ps.setString(5, bid.getUserId());
+        }) != 0;
+    }
+
+    @Override
     public boolean deleteUserBids(long id) {
-        return false; //TODO
+        return jdbcTemplate.update("DELETE FROM bids WHERE user_id=?", id) != 0;
     }
 
     @Override
     public boolean doubleItemsStartPrice(long id) {
-        return false; //TODO
+        return jdbcTemplate.update("UPDATE items " +
+                "SET start_price = start_price * 2 " +
+                "WHERE user_id = ?", id) != 0;
     }
 }

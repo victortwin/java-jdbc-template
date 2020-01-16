@@ -8,10 +8,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.Date;
-import java.sql.ResultSet;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @JdbcTest
 @ComponentScan(basePackages = "com.epam.izh.rd.online.autcion")
@@ -35,10 +36,10 @@ class JdbcTemplatePublicAuctionTest {
 
     @Test
     void getUserBids() throws ParseException {
-        long userId = 1;
+        long userId = 3;
         List<Bid> userBids = new ArrayList<Bid>() {{
-            add(new Bid("1", transformDate(dateFormat.parse("31.12.2004")), 10.0, "1", "1"));
-            add(new Bid("2", transformDate(dateFormat.parse("31.12.2004")), 20.0, "2", "1"));
+            add(new Bid("1", transformDate(dateFormat.parse("31.12.2004")), 10.0, "1", "3"));
+            add(new Bid("3", transformDate(dateFormat.parse("31.12.2004")), 30.0, "2", "3"));
         }};
 
         List<Bid> items = publicAuction.getUserBids(userId);
@@ -50,8 +51,8 @@ class JdbcTemplatePublicAuctionTest {
     void getUserItems() throws ParseException {
         long userId = 1;
         List<Item> userBids = new ArrayList<Item>() {{
-            add(new Item("1", 1.0, false,
-                    "description1", transformDate(dateFormat.parse("31.12.2004")), 100.0,
+            add(new Item("1", 1.0, true,
+                    "description1", transformDate(dateFormat.parse("31.12.2004")), 50.0,
                     transformDate(dateFormat.parse("31.12.2004")), "title1", "1"));
             add(new Item("2", 2.0, false,
                     "description2", transformDate(dateFormat.parse("31.12.2004")), 100.0,
@@ -66,8 +67,8 @@ class JdbcTemplatePublicAuctionTest {
     @Test
     void getItemByName() throws ParseException {
         String name = "title1";
-        Item item = new Item("1", 1.0, false,
-                "description1", transformDate(dateFormat.parse("31.12.2004")), 100.0,
+        Item item = new Item("1", 1.0, true,
+                "description1", transformDate(dateFormat.parse("31.12.2004")), 50.0,
                 transformDate(dateFormat.parse("31.12.2004")), "title1", "1");
 
         Item itemByName = publicAuction.getItemByName(name);
@@ -78,8 +79,8 @@ class JdbcTemplatePublicAuctionTest {
     @Test
     void getItemByDescription() throws ParseException {
         String description = "description1";
-        Item item = new Item("1", 1.0, false,
-                "description1", transformDate(dateFormat.parse("31.12.2004")), 100.0,
+        Item item = new Item("1", 1.0, true,
+                "description1", transformDate(dateFormat.parse("31.12.2004")), 50.0,
                 transformDate(dateFormat.parse("31.12.2004")), "title1", "1");
 
         Item itemByName = publicAuction.getItemByDescription(description);
@@ -89,43 +90,67 @@ class JdbcTemplatePublicAuctionTest {
 
     @Test
     void getAvgItemCost() {
-        //сложна
         Map<User, Double> userAndAvgItemCost = new HashMap<User, Double>() {{
             put(
                     new User("1", "address1", "VASYA1", "VASYALogin1", "VASYAPass1"),
-                    30.0
+                    75.0
             );
             put(
                     new User("2", "address2", "VASYA2", "VASYALogin2", "VASYAPass2"),
-                    30.0
+                    120.0
             );
         }};
         Map<User, Double> avgItemCost = publicAuction.getAvgItemCost();
 
-        assertTrue(userAndAvgItemCost.equals(avgItemCost));
+        assertEquals(userAndAvgItemCost, avgItemCost);
     }
 
     @Test
-    void getMaxBidsForEveryItem() {
+    void getMaxBidsForEveryItem() throws ParseException {
+        Map<Item, Bid> itemsAndBids = new HashMap<Item, Bid>() {{
+            put(
+                    new Item("1", 1.0, true,
+                            "description1", transformDate(dateFormat.parse("31.12.2004")), 50.0,
+                            transformDate(dateFormat.parse("31.12.2004")), "title1", "1"),
+                    new Bid("2", transformDate(dateFormat.parse("31.12.2004")), 20.0, "1", "2")
+            );
+            put(
+                    new Item("2", 2.0, false,
+                            "description2", transformDate(dateFormat.parse("31.12.2004")), 100.0,
+                            transformDate(dateFormat.parse("31.12.2004")), "title2", "1"),
+                    new Bid("3", transformDate(dateFormat.parse("31.12.2004")), 30.0, "2", "3")
+            );
+        }};
+        Map<Item, Bid> maxBidsForEveryItem = publicAuction.getMaxBidsForEveryItem();
+
+        assertEquals(itemsAndBids, maxBidsForEveryItem);
     }
 
     @Test
-    void getUserActualBids() {
+    void getUserActualBids() throws ParseException {
+        long userId = 3;
+        List<Bid> userBids = new ArrayList<Bid>() {{
+            add(new Bid("3", transformDate(dateFormat.parse("31.12.2004")), 30.0, "2", "3"));
+        }};
+        List<Bid> userActualBids = publicAuction.getUserActualBids(userId);
+
+        assertIterableEquals(userBids, userActualBids);
     }
 
     @Test
     void createUser() {
-        User user = new User("3", "address1", "VASYA1", "VASYALogin1", "VASYAPass1");
+        User user = new User("4", "address1", "VASYA1", "VASYALogin1", "VASYAPass1");
 
-        boolean result = publicAuction.createUser(user);
-        assertTrue(result);
+        assertTrue(publicAuction.createUser(user));
 
         User dbItem = jdbcTemplate.queryForObject("SELECT * FROM users WHERE user_id=?", (resultSet, i) -> {
             User res = new User();
             res.setUserId(resultSet.getString("user_id"));
             return res;
-        }, 3);
-        assertEquals(dbItem.getUserId(),user.getUserId());
+        }, 4);
+        assertEquals(dbItem.getUserId(), user.getUserId());
+
+        jdbcTemplate.execute("DELETE FROM users WHERE user_id=4");
     }
 
     @Test
@@ -134,8 +159,7 @@ class JdbcTemplatePublicAuctionTest {
                 "description4", transformDate(dateFormat.parse("31.12.2004")), 100.0,
                 transformDate(dateFormat.parse("31.12.2004")), "title4", "1");
 
-        boolean result = publicAuction.createItem(item);
-        assertTrue(result);
+        assertTrue(publicAuction.createItem(item));
 
         Item dbItem = jdbcTemplate.queryForObject("SELECT * FROM items WHERE item_id=?", (resultSet, i) -> {
             Item res = new Item();
@@ -143,19 +167,73 @@ class JdbcTemplatePublicAuctionTest {
             res.setStartDate(resultSet.getDate("start_date"));
             return res;
         }, 4);
-        assertEquals(dbItem.getItemId(),item.getItemId());
-        assertEquals(dbItem.getStartDate(),item.getStartDate());
+        assertEquals(dbItem.getItemId(), item.getItemId());
+        assertEquals(dbItem.getStartDate(), item.getStartDate());
+
+        jdbcTemplate.execute("DELETE FROM items WHERE item_id=4");
     }
 
     @Test
-    void deleteUserBids() {
+    void createBid() throws ParseException {
+        Bid bid = new Bid("4", transformDate(dateFormat.parse("31.12.2004")), 10.0, "1", "1");
+
+        assertTrue(publicAuction.createBid(bid));
+
+        Bid dbItem = jdbcTemplate.queryForObject("SELECT * FROM bids WHERE bid_id=?", (resultSet, i) -> {
+            Bid res = new Bid();
+            res.setBidId(resultSet.getString("bid_id"));
+            res.setBidDate(resultSet.getDate("bid_date"));
+            return res;
+        }, 4);
+        assertEquals(dbItem.getBidId(), dbItem.getBidId());
+        assertEquals(dbItem.getBidDate(), bid.getBidDate());
+
+        jdbcTemplate.execute("DELETE FROM bids WHERE bid_id=4");
     }
 
     @Test
-    void doubleItemsStartPrice() {
+    void deleteUserBids() throws ParseException {
+        User user = new User("4", "address1", "VASYA1", "VASYALogin1", "VASYAPass1");
+        Bid bid = new Bid("4", transformDate(dateFormat.parse("31.12.2004")), 10.0, "1", "4");
+        publicAuction.createUser(user);
+        publicAuction.createBid(bid);
+
+        assertTrue(publicAuction.deleteUserBids(Long.parseLong(user.getUserId())));
+        assertThrows(EmptyResultDataAccessException.class, () -> {
+            jdbcTemplate.queryForObject("SELECT * FROM bids WHERE bid_id=?", (resultSet, i) -> {
+                Bid res = new Bid();
+                res.setBidId(resultSet.getString("bid_id"));
+                res.setBidDate(resultSet.getDate("bid_date"));
+                return res;
+            }, 4);
+        });
+
+        jdbcTemplate.execute("DELETE FROM users WHERE user_id=4");
     }
 
-    private Date transformDate(java.util.Date date){
+
+    @Test
+    void doubleItemsStartPrice() throws ParseException {
+        long userId = 3;
+        Item item = new Item("4", 1.0, false,
+                "description4", transformDate(dateFormat.parse("31.12.2004")), 100.0,
+                transformDate(dateFormat.parse("31.12.2004")), "title4", "3");
+        publicAuction.createItem(item);
+
+        assertTrue(publicAuction.doubleItemsStartPrice(userId));
+        Item dbItem = jdbcTemplate.queryForObject("SELECT * FROM items WHERE item_id=?", (resultSet, i) -> {
+            Item res = new Item();
+            res.setItemId(resultSet.getString("item_id"));
+            res.setStartDate(resultSet.getDate("start_date"));
+            res.setStartPrice(resultSet.getDouble("start_price"));
+            return res;
+        }, 4);
+        assertEquals(item.getStartPrice() * 2, dbItem.getStartPrice(), 0.1);
+
+        jdbcTemplate.execute("DELETE FROM items WHERE item_id=4");
+    }
+
+    private Date transformDate(java.util.Date date) {
         return new Date(date.getTime());
     }
 }
