@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 /**
  * Лот в ставке
@@ -13,13 +13,13 @@ import java.sql.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Item {
-    private String itemId;
+    private Long itemId;
     private Double bidIncrement;
     private Boolean buyItNow;
     private String description;
-    private Date startDate;
+    private LocalDate startDate;
     private Double startPrice;
-    private Date stopDate;
+    private LocalDate stopDate;
     private String title;
-    private String userId;
+    private Long userId;
 }

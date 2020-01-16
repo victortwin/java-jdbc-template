@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Date;
+import java.time.LocalDate;
 
 /**
  * Ставка
@@ -13,9 +13,9 @@ import java.sql.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Bid {
-    private String bidId;
-    private Date bidDate;
+    private Long bidId;
+    private LocalDate bidDate;
     private Double bidValue;
-    private String itemId;
-    private String userId;
+    private Long itemId;
+    private Long userId;
 }
