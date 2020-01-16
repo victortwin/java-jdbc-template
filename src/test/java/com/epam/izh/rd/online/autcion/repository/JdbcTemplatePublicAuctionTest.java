@@ -4,6 +4,7 @@ package com.epam.izh.rd.online.autcion.repository;
 import com.epam.izh.rd.online.autcion.entity.Bid;
 import com.epam.izh.rd.online.autcion.entity.Item;
 import com.epam.izh.rd.online.autcion.entity.User;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
@@ -15,13 +16,11 @@ import java.sql.Date;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @JdbcTest
 @ComponentScan(basePackages = "com.epam.izh.rd.online.autcion")
@@ -37,10 +36,10 @@ class JdbcTemplatePublicAuctionTest {
     @Test
     void getUserBids() throws ParseException {
         long userId = 3;
-        List<Bid> userBids = new ArrayList<Bid>() {{
-            add(new Bid("1", transformDate(dateFormat.parse("31.12.2004")), 10.0, "1", "3"));
-            add(new Bid("3", transformDate(dateFormat.parse("31.12.2004")), 30.0, "2", "3"));
-        }};
+        List<Bid> userBids = Lists.newArrayList(
+                new Bid("1", transformDate(dateFormat.parse("31.12.2004")), 10.0, "1", "3"),
+                new Bid("3", transformDate(dateFormat.parse("31.12.2004")), 30.0, "2", "3")
+        );
 
         List<Bid> items = publicAuction.getUserBids(userId);
 
@@ -50,14 +49,14 @@ class JdbcTemplatePublicAuctionTest {
     @Test
     void getUserItems() throws ParseException {
         long userId = 1;
-        List<Item> userBids = new ArrayList<Item>() {{
-            add(new Item("1", 1.0, true,
-                    "description1", transformDate(dateFormat.parse("31.12.2004")), 50.0,
-                    transformDate(dateFormat.parse("31.12.2004")), "title1", "1"));
-            add(new Item("2", 2.0, false,
-                    "description2", transformDate(dateFormat.parse("31.12.2004")), 100.0,
-                    transformDate(dateFormat.parse("31.12.2004")), "title2", "1"));
-        }};
+        List<Item> userBids = Lists.newArrayList(
+                new Item("1", 1.0, true,
+                        "description1", transformDate(dateFormat.parse("31.12.2004")), 50.0,
+                        transformDate(dateFormat.parse("31.12.2004")), "title1", "1"),
+                new Item("2", 2.0, false,
+                        "description2", transformDate(dateFormat.parse("31.12.2004")), 100.0,
+                        transformDate(dateFormat.parse("31.12.2004")), "title2", "1")
+        );
 
         List<Item> items = publicAuction.getUserItems(userId);
 
@@ -90,16 +89,15 @@ class JdbcTemplatePublicAuctionTest {
 
     @Test
     void getAvgItemCost() {
-        Map<User, Double> userAndAvgItemCost = new HashMap<User, Double>() {{
-            put(
-                    new User("1", "address1", "VASYA1", "VASYALogin1", "VASYAPass1"),
-                    75.0
-            );
-            put(
-                    new User("2", "address2", "VASYA2", "VASYALogin2", "VASYAPass2"),
-                    120.0
-            );
-        }};
+        Map<User, Double> userAndAvgItemCost = new HashMap<>();
+        userAndAvgItemCost.put(
+                new User("1", "address1", "VASYA1", "VASYALogin1", "VASYAPass1"),
+                75.0
+        );
+        userAndAvgItemCost.put(
+                new User("2", "address2", "VASYA2", "VASYALogin2", "VASYAPass2"),
+                120.0
+        );
         Map<User, Double> avgItemCost = publicAuction.getAvgItemCost();
 
         assertEquals(userAndAvgItemCost, avgItemCost);
@@ -107,20 +105,19 @@ class JdbcTemplatePublicAuctionTest {
 
     @Test
     void getMaxBidsForEveryItem() throws ParseException {
-        Map<Item, Bid> itemsAndBids = new HashMap<Item, Bid>() {{
-            put(
-                    new Item("1", 1.0, true,
-                            "description1", transformDate(dateFormat.parse("31.12.2004")), 50.0,
-                            transformDate(dateFormat.parse("31.12.2004")), "title1", "1"),
-                    new Bid("2", transformDate(dateFormat.parse("31.12.2004")), 20.0, "1", "2")
-            );
-            put(
-                    new Item("2", 2.0, false,
-                            "description2", transformDate(dateFormat.parse("31.12.2004")), 100.0,
-                            transformDate(dateFormat.parse("31.12.2004")), "title2", "1"),
-                    new Bid("3", transformDate(dateFormat.parse("31.12.2004")), 30.0, "2", "3")
-            );
-        }};
+        Map<Item, Bid> itemsAndBids = new HashMap<>();
+        itemsAndBids.put(
+                new Item("1", 1.0, true,
+                        "description1", transformDate(dateFormat.parse("31.12.2004")), 50.0,
+                        transformDate(dateFormat.parse("31.12.2004")), "title1", "1"),
+                new Bid("2", transformDate(dateFormat.parse("31.12.2004")), 20.0, "1", "2")
+        );
+        itemsAndBids.put(
+                new Item("2", 2.0, false,
+                        "description2", transformDate(dateFormat.parse("31.12.2004")), 100.0,
+                        transformDate(dateFormat.parse("31.12.2004")), "title2", "1"),
+                new Bid("3", transformDate(dateFormat.parse("31.12.2004")), 30.0, "2", "3")
+        );
         Map<Item, Bid> maxBidsForEveryItem = publicAuction.getMaxBidsForEveryItem();
 
         assertEquals(itemsAndBids, maxBidsForEveryItem);
@@ -129,9 +126,9 @@ class JdbcTemplatePublicAuctionTest {
     @Test
     void getUserActualBids() throws ParseException {
         long userId = 3;
-        List<Bid> userBids = new ArrayList<Bid>() {{
-            add(new Bid("3", transformDate(dateFormat.parse("31.12.2004")), 30.0, "2", "3"));
-        }};
+        List<Bid> userBids = Lists.newArrayList(
+                new Bid("3", transformDate(dateFormat.parse("31.12.2004")), 30.0, "2", "3")
+        );
         List<Bid> userActualBids = publicAuction.getUserActualBids(userId);
 
         assertIterableEquals(userBids, userActualBids);
