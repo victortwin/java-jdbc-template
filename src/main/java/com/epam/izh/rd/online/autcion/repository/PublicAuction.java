@@ -55,12 +55,17 @@ public interface PublicAuction {
     boolean createItem(Item item);
 
     /**
-     *  Увеличить стартовые цены товаров данного пользователя вдвое
+     * Добавить новую ставку
+     */
+    boolean createBid(Bid bid);
+
+    /**
+     * Увеличить стартовые цены товаров данного пользователя вдвое
      */
     boolean deleteUserBids(long id);
 
     /**
-     *  Увеличить стартовые цены товаров данного пользователя вдвое
+     * Увеличить стартовые цены товаров данного пользователя вдвое
      */
     boolean doubleItemsStartPrice(long id);
 

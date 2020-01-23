@@ -3,67 +3,72 @@ package com.epam.izh.rd.online.autcion.repository;
 import com.epam.izh.rd.online.autcion.entity.Bid;
 import com.epam.izh.rd.online.autcion.entity.Item;
 import com.epam.izh.rd.online.autcion.entity.User;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
 import java.util.Map;
 
-public class JdbcTemplatePublicAuction implements PublicAuction {
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 
-    private JdbcTemplate jdbcTemplate;
+public class JdbcTemplatePublicAuction implements PublicAuction {
 
     @Override
     public List<Bid> getUserBids(long id) {
-        return null; //TODO
+        return emptyList();
     }
 
     @Override
     public List<Item> getUserItems(long id) {
-        return null; //TODO
+        return emptyList();
     }
 
     @Override
     public Item getItemByName(String name) {
-        return null; //TODO
+        return new Item();
     }
 
     @Override
     public Item getItemByDescription(String name) {
-        return null; //TODO
+        return new Item();
     }
 
     @Override
     public Map<User, Double> getAvgItemCost() {
-        return null; //TODO
+        return emptyMap();
     }
 
     @Override
     public Map<Item, Bid> getMaxBidsForEveryItem() {
-        return null; //TODO
+        return emptyMap();
     }
 
     @Override
     public List<Bid> getUserActualBids(long id) {
-        return null; //TODO
+        return emptyList();
     }
 
     @Override
     public boolean createUser(User user) {
-        return false; //TODO
+        return false;
     }
 
     @Override
     public boolean createItem(Item item) {
-        return false; //TODO
+        return false;
+    }
+
+    @Override
+    public boolean createBid(Bid bid) {
+        return false;
     }
 
     @Override
     public boolean deleteUserBids(long id) {
-        return false; //TODO
+        return false;
     }
 
     @Override
     public boolean doubleItemsStartPrice(long id) {
-        return false; //TODO
+        return false;
     }
 }
