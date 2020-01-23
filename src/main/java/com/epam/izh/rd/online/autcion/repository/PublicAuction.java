@@ -60,12 +60,12 @@ public interface PublicAuction {
     boolean createBid(Bid bid);
 
     /**
-     *  Увеличить стартовые цены товаров данного пользователя вдвое
+     * Увеличить стартовые цены товаров данного пользователя вдвое
      */
     boolean deleteUserBids(long id);
 
     /**
-     *  Увеличить стартовые цены товаров данного пользователя вдвое
+     * Увеличить стартовые цены товаров данного пользователя вдвое
      */
     boolean doubleItemsStartPrice(long id);
 

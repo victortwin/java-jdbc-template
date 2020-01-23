@@ -33,34 +33,26 @@ import static org.junit.jupiter.api.Assertions.*;
 class JdbcTemplatePublicAuctionTest {
 
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
-
-    @Autowired
-    private PublicAuction publicAuction;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    private RowMapper<Bid> bidRowMapper;
-
-    @Autowired
-    private RowMapper<Item> itemRowMapper;
-
-    @Autowired
-    private RowMapper<User> userRowMapper;
-
     private static Bid bid1;
     private static Bid bid2;
     private static Bid bid3;
     private static Bid bid4;
-
     private static Item item1;
     private static Item item2;
     private static Item item4;
-
     private static User user1;
     private static User user2;
     private static User user4;
+    @Autowired
+    private PublicAuction publicAuction;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+    @Autowired
+    private RowMapper<Bid> bidRowMapper;
+    @Autowired
+    private RowMapper<Item> itemRowMapper;
+    @Autowired
+    private RowMapper<User> userRowMapper;
 
     @BeforeEach
     private void setup() {
