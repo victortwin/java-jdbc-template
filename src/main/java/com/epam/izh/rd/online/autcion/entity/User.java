@@ -16,5 +16,4 @@ public class User {
     private String fullName;
     private String login;
     private String password;
-
 }

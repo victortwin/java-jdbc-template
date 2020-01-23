@@ -32,10 +32,11 @@ import static org.junit.jupiter.api.Assertions.*;
 @ComponentScan(basePackages = "com.epam.izh.rd.online.autcion")
 class JdbcTemplatePublicAuctionTest {
 
-    private static final DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy");
 
     @Autowired
     private PublicAuction publicAuction;
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -91,7 +92,7 @@ class JdbcTemplatePublicAuctionTest {
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("Тест метода - Список ставок данного пользователя")
     void getUserBids() {
         long userId = 3;
         List<Bid> userBids = Lists.newArrayList(bid1, bid3);
@@ -102,11 +103,10 @@ class JdbcTemplatePublicAuctionTest {
     }
 
     @Test
+    @DisplayName("Тест метода - Список лотов данного пользователя")
     void getUserItems() {
         long userId = 1;
-        List<Item> userBids = Lists.newArrayList(
-                item1, item2
-        );
+        List<Item> userBids = Lists.newArrayList(item1, item2);
 
         List<Item> items = publicAuction.getUserItems(userId);
 
@@ -114,6 +114,7 @@ class JdbcTemplatePublicAuctionTest {
     }
 
     @Test
+    @DisplayName("Тест метода - Поиск лотов по подстроке в названии")
     void getItemByName() {
         String name = "title1";
 
@@ -123,6 +124,7 @@ class JdbcTemplatePublicAuctionTest {
     }
 
     @Test
+    @DisplayName("Тест метода - Поиск лотов по подстроке в описании")
     void getItemByDescription() {
         String description = "description1";
 
@@ -132,6 +134,7 @@ class JdbcTemplatePublicAuctionTest {
     }
 
     @Test
+    @DisplayName("Тест метода - Средняя цена лотов каждого пользователя")
     void getAvgItemCost() {
         Map<User, Double> userAndAvgItemCost = new HashMap<>();
         userAndAvgItemCost.put(
@@ -148,6 +151,7 @@ class JdbcTemplatePublicAuctionTest {
     }
 
     @Test
+    @DisplayName("Тест метода - Максимальный размер имеющихся ставок на каждый лот")
     void getMaxBidsForEveryItem() {
         Map<Item, Bid> itemsAndBids = new HashMap<>();
         itemsAndBids.put(
@@ -164,14 +168,15 @@ class JdbcTemplatePublicAuctionTest {
     }
 
     @Test
+    @DisplayName("Тест метода - Список действующих лотов данного пользователя")
     void getUserActualBids() {
-        long userId = 3;
-        List<Bid> userActualBids = publicAuction.getUserActualBids(userId);
+        List<Bid> userActualBids = publicAuction.getUserActualBids(user1.getUserId());
 
         assertIterableEquals(singletonList(bid3), userActualBids);
     }
 
     @Test
+    @DisplayName("Тест метода - Добавить нового пользователя")
     void createUser() {
         assertTrue(publicAuction.createUser(user4));
 
@@ -182,6 +187,7 @@ class JdbcTemplatePublicAuctionTest {
     }
 
     @Test
+    @DisplayName("Тест метода - Добавить новый лот")
     void createItem() {
         assertTrue(publicAuction.createItem(item4));
 
@@ -193,6 +199,7 @@ class JdbcTemplatePublicAuctionTest {
     }
 
     @Test
+    @DisplayName("Тест метода - Удалить ставки данного пользователя")
     void createBid() {
         assertTrue(publicAuction.createUser(user4));
         assertTrue(publicAuction.createBid(bid4));
@@ -205,6 +212,7 @@ class JdbcTemplatePublicAuctionTest {
     }
 
     @Test
+    @DisplayName("Тест метода - Удалить лоты данного пользователя")
     void deleteUserBids() {
         publicAuction.createUser(user4);
         publicAuction.createBid(bid4);
@@ -217,6 +225,7 @@ class JdbcTemplatePublicAuctionTest {
 
 
     @Test
+    @DisplayName("Тест метода - Увеличить стартовые цены товаров данного пользователя вдвое")
     void doubleItemsStartPrice() {
         long userId = 3;
         publicAuction.createItem(item4);
@@ -230,6 +239,6 @@ class JdbcTemplatePublicAuctionTest {
 
     @SneakyThrows
     private LocalDate transformDate(String string) {
-        return new Date(dateFormat.parse(string).getTime()).toLocalDate();
+        return new Date(DATE_FORMAT.parse(string).getTime()).toLocalDate();
     }
 }
