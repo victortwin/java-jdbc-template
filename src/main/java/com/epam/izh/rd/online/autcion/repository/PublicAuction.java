@@ -40,7 +40,7 @@ public interface PublicAuction {
     Map<Item, Bid> getMaxBidsForEveryItem();
 
     /**
-     * Список действующих лотов данного пользователя
+     * Список действующих ставок данного пользователя
      */
     List<Bid> getUserActualBids(long id);
 
