@@ -4,6 +4,7 @@ import com.epam.izh.rd.online.autcion.entity.Bid;
 import com.epam.izh.rd.online.autcion.entity.Item;
 import com.epam.izh.rd.online.autcion.entity.User;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +43,9 @@ public interface PublicAuction {
     /**
      * Список действующих ставок данного пользователя
      */
-    List<Bid> getUserActualBids(long id);
+    default List<Bid> getUserActualBids(long id) {
+        return Collections.emptyList();
+    }
 
     /**
      * Добавить нового пользователя
