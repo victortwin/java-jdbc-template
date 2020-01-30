@@ -6,10 +6,7 @@ import com.epam.izh.rd.online.autcion.entity.Item;
 import com.epam.izh.rd.online.autcion.entity.User;
 import lombok.SneakyThrows;
 import org.assertj.core.util.Lists;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.ComponentScan;
@@ -43,6 +40,7 @@ class JdbcTemplatePublicAuctionTest {
     private static User user1;
     private static User user2;
     private static User user4;
+
     @Autowired
     private PublicAuction publicAuction;
     @Autowired
@@ -159,7 +157,6 @@ class JdbcTemplatePublicAuctionTest {
         assertEquals(itemsAndBids, maxBidsForEveryItem);
     }
 
-    @Test
     @DisplayName("Тест метода - Список действующих лотов данного пользователя")
     void getUserActualBids() {
         List<Bid> userActualBids = publicAuction.getUserActualBids(user1.getUserId());

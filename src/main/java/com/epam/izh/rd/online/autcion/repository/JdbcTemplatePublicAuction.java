@@ -43,11 +43,6 @@ public class JdbcTemplatePublicAuction implements PublicAuction {
     }
 
     @Override
-    public List<Bid> getUserActualBids(long id) {
-        return emptyList();
-    }
-
-    @Override
     public boolean createUser(User user) {
         return false;
     }
