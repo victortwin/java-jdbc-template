@@ -110,14 +110,6 @@ public class JdbcTemplatePublicAuction implements PublicAuction {
     }
 
     @Override
-    public List<Bid> getUserActualBids(long id) {
-
-        List<Bid> userBidList;
-
-        return emptyList();
-    }
-
-    @Override
     public boolean createUser(User user) {
 
         List<User> existingUsersList = jdbcTemplate.query("select * from users", userMapper);
@@ -165,11 +157,15 @@ public class JdbcTemplatePublicAuction implements PublicAuction {
 
     @Override
     public boolean deleteUserBids(long id) {
-        return false;
+        int affectedRows = jdbcTemplate.update("delete from bids where user_id = ?", id);
+
+        return affectedRows > 0;
     }
 
     @Override
     public boolean doubleItemsStartPrice(long id) {
-        return false;
+        int affectedRows = jdbcTemplate.update("update items set start_price = " +
+                "start_price * 2 where user_id = ?", id);
+        return affectedRows > 0;
     }
 }
